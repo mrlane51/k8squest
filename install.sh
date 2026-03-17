@@ -10,6 +10,17 @@ command -v kind >/dev/null || { echo "❌ kind not found. Install with: brew ins
 command -v kubectl >/dev/null || { echo "❌ kubectl not found. Install with: brew install kubectl"; exit 1; }
 command -v python3 >/dev/null || { echo "❌ python3 not found"; exit 1; }
 
+# Verify Python version >= 3.9 (required for type hint syntax used in engine)
+PYTHON_VERSION=$(python3 -c "import sys; v=sys.version_info; print(f'{v.major}.{v.minor}'); exit(0 if (v.major, v.minor) >= (3, 9) else 1)") || {
+  echo "❌ Python 3.9+ required, but found $PYTHON_VERSION"
+  echo "   Install a newer Python:"
+  echo "   macOS:  brew install python@3.11"
+  echo "   Linux:  sudo apt install python3.11"
+  echo "   Then ensure 'python3' resolves to 3.9+ (update PATH or alternatives)"
+  exit 1
+}
+echo "✅ Python $PYTHON_VERSION detected"
+
 echo "✅ Prerequisites OK"
 echo ""
 
