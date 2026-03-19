@@ -73,6 +73,36 @@ except ImportError:
 console = Console()
 
 
+def wait_for_any_key():
+    """Block until the user presses any single key (including space bar).
+    Falls back to input() on platforms where raw-tty is unavailable."""
+    if os.name == 'nt':  # Windows
+        import msvcrt
+        while True:
+            ch = msvcrt.getwch()
+            # Skip null-prefix escape sequences (arrow/page keys)
+            if ch in ("\x00", "\xe0"):
+                msvcrt.getwch()
+                continue
+            return
+    else:  # Unix / macOS
+        import tty, termios, select
+        fd = sys.stdin.fileno()
+        try:
+            old_settings = termios.tcgetattr(fd)
+        except termios.error:
+            input()  # fallback (e.g. piped stdin)
+            return
+        try:
+            tty.setraw(fd)
+            ch = sys.stdin.read(1)
+            # Consume the rest of an escape sequence so it doesn't pollute input
+            if ch == "\x1b" and select.select([sys.stdin], [], [], 0.05)[0]:
+                sys.stdin.read(2)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+
 class PaginatedDisplay:
     """Helper class for paginating long content like man pages"""
 
@@ -889,7 +919,7 @@ Look for "2/2" ready replicas!
                 mission["xp"],
                 mission.get("difficulty", "beginner"),
             )
-            input()  # Wait for player to press any key
+            wait_for_any_key()  # Wait for player to press any key (incl. space bar)
 
         # Show mission briefing with metadata
         console.clear()
