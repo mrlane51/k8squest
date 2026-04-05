@@ -191,10 +191,8 @@ class PaginatedDisplay:
         return ranges
 
     def _render_page(self, page_content, title, border_style, page_num=None, total_pages=None):
-        # More aggressive screen clearing for cleaner navigation
-        # Use ANSI escape codes for proper clearing
-        self.console.print("\033[2J", end="")  # Clear entire screen
-        self.console.print("\033[H", end="")   # Move cursor to home (0,0)
+        # Use Rich's terminal controls so escape sequences don't leak into output.
+        self.console.clear()
 
         if page_num is not None and total_pages is not None:
             page_indicator = f" [Page {page_num}/{total_pages}]"
@@ -252,10 +250,6 @@ class PaginatedDisplay:
             page_index = 0
 
             while True:
-                # Clear screen for clean page display (but stay in main buffer if use_alt_buffer=False)
-                if not use_alt_buffer:
-                    self.console.clear()
-                
                 start_idx, end_idx = page_ranges[page_index]
                 page_content = '\n'.join(lines[start_idx:end_idx])
                 self._render_page(page_content, title, border_style, page_index + 1, total_pages)
