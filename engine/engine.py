@@ -1224,9 +1224,9 @@ Look for "2/2" ready replicas!
 
                 # After playing, ask what to do next
                 console.print("\n[cyan]What would you like to do?[/cyan]")
-                console.print("  [1] Play another level")
-                console.print("  [2] Continue from here")
-                console.print("  [q] Quit")
+                console.print("  [1] Play another level", markup=False)
+                console.print("  [2] Continue from here", markup=False)
+                console.print("  [q] Quit", markup=False)
                 console.print()
 
                 next_choice = Prompt.ask(
@@ -1370,10 +1370,10 @@ def main():
 
         # Offer three options
         console.print("[cyan]Choose an option:[/cyan]")
-        console.print("  [1] Continue from where you left off")
-        console.print("  [2] Play a specific level")
-        console.print("  [3] Start from the beginning")
-        console.print("  [q] Quit")
+        console.print("  [1] Continue from where you left off", markup=False)
+        console.print("  [2] Play a specific level", markup=False)
+        console.print("  [3] Start from the beginning", markup=False)
+        console.print("  [q] Quit", markup=False)
         console.print()
 
         choice = Prompt.ask("Your choice", choices=["1", "2", "3", "q"], default="1")
