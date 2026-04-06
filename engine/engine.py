@@ -191,10 +191,8 @@ class PaginatedDisplay:
         return ranges
 
     def _render_page(self, page_content, title, border_style, page_num=None, total_pages=None):
-        # More aggressive screen clearing for cleaner navigation
-        # Use ANSI escape codes for proper clearing
-        self.console.print("\033[2J", end="")  # Clear entire screen
-        self.console.print("\033[H", end="")   # Move cursor to home (0,0)
+        # Use Rich's terminal controls so escape sequences don't leak into output.
+        self.console.clear()
 
         if page_num is not None and total_pages is not None:
             page_indicator = f" [Page {page_num}/{total_pages}]"
@@ -252,10 +250,6 @@ class PaginatedDisplay:
             page_index = 0
 
             while True:
-                # Clear screen for clean page display (but stay in main buffer if use_alt_buffer=False)
-                if not use_alt_buffer:
-                    self.console.clear()
-                
                 start_idx, end_idx = page_ranges[page_index]
                 page_content = '\n'.join(lines[start_idx:end_idx])
                 self._render_page(page_content, title, border_style, page_index + 1, total_pages)
@@ -328,9 +322,9 @@ class K8sQuest:
 
         # Retro-style title
         title = """
-    ╦╔═╔═╗╔═╗ ╦ ╦╔═╗╔═╗╔╦╗
-    ╠╩╗╚═╗║═╬╗║ ║║╣ ╚═╗ ║
-    ╩ ╩╚═╝╚═╝╚╚═╝╚═╝╚═╝ ╩
+    ╦╔═╔═╗╔═╗╔═╗ ╦ ╦╔═╗╔═╗╔╦╗
+    ╠╩╗╠═╣╚═╗║═╬╗║ ║║╣ ╚═╗ ║
+    ╩ ╩╚═╝╚═╝╚═╝╚╚═╝╚═╝╚═╝ ╩
         """
 
         welcome_panel = Panel(
@@ -1230,9 +1224,9 @@ Look for "2/2" ready replicas!
 
                 # After playing, ask what to do next
                 console.print("\n[cyan]What would you like to do?[/cyan]")
-                console.print("  [1] Play another level")
-                console.print("  [2] Continue from here")
-                console.print("  [q] Quit")
+                console.print("  [1] Play another level", markup=False)
+                console.print("  [2] Continue from here", markup=False)
+                console.print("  [q] Quit", markup=False)
                 console.print()
 
                 next_choice = Prompt.ask(
@@ -1376,10 +1370,10 @@ def main():
 
         # Offer three options
         console.print("[cyan]Choose an option:[/cyan]")
-        console.print("  [1] Continue from where you left off")
-        console.print("  [2] Play a specific level")
-        console.print("  [3] Start from the beginning")
-        console.print("  [q] Quit")
+        console.print("  [1] Continue from where you left off", markup=False)
+        console.print("  [2] Play a specific level", markup=False)
+        console.print("  [3] Start from the beginning", markup=False)
+        console.print("  [q] Quit", markup=False)
         console.print()
 
         choice = Prompt.ask("Your choice", choices=["1", "2", "3", "q"], default="1")
